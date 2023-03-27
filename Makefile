@@ -10,9 +10,9 @@ dev: srv
 .PHONY: stop
 stop:
 	@echo "Stopping local containers"
-	@docker compose -f docker-compose.srv.yml
+	@docker compose -f docker-compose.srv.yml stop
 
 .PHONY: down
 down:
 	@echo "Stopping and removing local containers"
-	@docker compose -f docker-compose.srv.yml
+	@docker compose -f docker-compose.srv.yml down
