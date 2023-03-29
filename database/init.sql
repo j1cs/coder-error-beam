@@ -1,8 +1,5 @@
--- Create a new database
-CREATE DATABASE user;
-
 -- Switch to the new database
-\c user;
+\c main;
 
 -- Create a table to store the model user's information
 CREATE TABLE person (
