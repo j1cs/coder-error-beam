@@ -10,6 +10,7 @@ import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.SimpleFunction;
+import org.apache.beam.sdk.values.Row;
 import picocli.CommandLine.Command;
 
 
@@ -28,24 +29,19 @@ public class AppCommand implements Runnable {
                 .fromArgs("--runner=DirectRunner")
                 .as(AppOptions.class);
         Pipeline p = Pipeline.create(options);
-        p.apply("Selecting", JdbcIO.<UserData>read()
+        p.apply("Selecting", JdbcIO.readRows()
                 .withDataSourceConfiguration(JdbcIO.DataSourceConfiguration.create(
                                 "org.postgresql.Driver",
-                                "jdbc:postgres://localhost:5432/mydb")
+                                "jdbc:postgresql://localhost:5432/main")
                         .withUsername("myuser")
                         .withPassword("mypassword"))
-                        .withQuery("select name, lastname from user where name = 'john'")
-                .withRowMapper(resultSet -> UserData.builder()
-                        .name(resultSet.getString(1))
-                        .lastname(resultSet.getString(2))
-                        .build())
+                        .withQuery("select first_name, last_name from person where first_name = 'john'")
                 .withOutputParallelization(false)
         )
-                .apply("nex step", MapElements.via(new SimpleFunction<UserData, Integer>() {
+                .apply("next step", MapElements.via(new SimpleFunction<Row, Object>() {
                     @Override
-                    public Integer apply(UserData input) {
-                        log.info(input.toString());
-                        return 1;
+                    public Object apply(Row input) {
+                        return super.apply(input);
                     }
                 }));
 
