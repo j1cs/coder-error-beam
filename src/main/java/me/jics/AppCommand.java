@@ -38,10 +38,11 @@ public class AppCommand implements Runnable {
                         .withQuery("select first_name, last_name from person where first_name = 'john'")
                 .withOutputParallelization(false)
         )
-                .apply("next step", MapElements.via(new SimpleFunction<Row, Object>() {
+                .apply("next step", MapElements.via(new SimpleFunction<Row, UserData>() {
                     @Override
-                    public Object apply(Row input) {
-                        return super.apply(input);
+                    public UserData apply(Row input) {
+                        log.info(input.getValue(1));
+                        return new UserData(input.getString(1), input.getString(2));
                     }
                 }));
 
